@@ -8,9 +8,6 @@
   template:
     src: jails.local.j2
     dest: /etc/fail2ban/jail.d/jails.local
+  notify:
+   - restart fail2ban
 
-- name: Restart fail2ban
-  systemd:
-    name: fail2ban
-    state: restarted
-    enabled: yes
