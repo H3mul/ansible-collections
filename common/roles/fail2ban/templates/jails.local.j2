@@ -1,0 +1,12 @@
+{% for service in fail2ban_services %}
+
+[{{service.name}}]
+enabled = {{ service.enabled if service.enabled is defined else "true" }}
+{% if service.port is defined %}
+port = {{ service.port }}
+{% endif %}
+{% if service.bantime is defined %}
+bantime = {{ service.bantime }}
+{% endif %}
+
+{% endfor %}

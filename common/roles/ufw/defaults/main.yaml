@@ -1,0 +1,3 @@
+deny_all_incoming: true
+allow_all_outgoing: true
+allowed_ufw_rules: []

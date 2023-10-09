@@ -1,0 +1,34 @@
+- name: install ufw
+  apt:
+    name: ufw
+    state: latest
+
+- name: ufw deny incoming
+  ufw:
+    direction: incoming
+    proto: any
+    policy: deny
+  notify:
+    - reload ufw
+  when: deny_all_incoming | bool == true
+
+- name: ufw allow outgoing
+  ufw:
+    direction: outgoing
+    proto: any
+    policy: allow
+  notify:
+    - reload ufw
+  when: allow_all_outgoing | bool == true
+
+- name: ufw allow 
+  ufw:
+    rule: allow
+    name: "{{ item }}"
+  notify:
+    - reload ufw
+  loop: "{{ allowed_ufw_rules }}"
+
+- name: enable ufw service
+  ufw:
+    state: enabled

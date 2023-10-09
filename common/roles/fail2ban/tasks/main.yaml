@@ -1,0 +1,16 @@
+---
+- name: Install fail2ban
+  apt:
+    name: fail2ban
+    state: present
+
+- name: Set up jails
+  template:
+    src: jails.local.j2
+    dest: /etc/fail2ban/jail.d/jails.local
+
+- name: Restart fail2ban
+  systemd:
+    name: fail2ban
+    state: restarted
+    enabled: yes

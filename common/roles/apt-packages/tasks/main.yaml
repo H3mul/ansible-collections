@@ -1,0 +1,14 @@
+- name: Install aptitude
+  apt:
+    pkg: aptitude
+    state: latest
+    update_cache: true
+
+- name: Install required system packages
+  apt:
+    pkg: "{{ apt_packages }}"
+    state: latest
+
+- name: Perform system upgrade
+  apt:
+    upgrade: "{{ apt_upgrade }}"
