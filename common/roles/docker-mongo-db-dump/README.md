@@ -1,0 +1,1 @@
+Fetches a dump of a mongodb running in a container on a remote machine, and copies it to the local filesystem

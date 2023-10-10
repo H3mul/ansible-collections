@@ -1,0 +1,22 @@
+- name: dump mongodb
+  shell: docker exec {{ mongo_db_dump_mongo_container_name }} mongodump {{ mongo_db_dump_uri }} --out {{ mongo_db_dump_container_dest }}/{{ mongo_db_dump_file_name }}
+
+- name: create tmp dir for dump
+  tempfile:
+    state: directory
+    prefix: mongodump_
+  register: mongo_db_dump_tmp_dir
+
+- name: copy dump out of container
+  shell: docker cp {{ mongo_db_dump_mongo_container_name }}:{{ mongo_db_dump_container_dest }}/{{ mongo_db_dump_file_name }} {{ mongo_db_dump_tmp_dir.path }}
+
+- name: fetch dump from remote to local
+  synchronize:
+    mode: pull
+    src: "{{ mongo_db_dump_tmp_dir.path }}/{{ mongo_db_dump_file_name }}"
+    dest: "{{ mongo_db_dump_local_dest }}"
+
+- name: delete remote tmp dir
+  file:
+    path: "{{ mongo_db_dump_tmp_dir.path }}"
+    state: absent

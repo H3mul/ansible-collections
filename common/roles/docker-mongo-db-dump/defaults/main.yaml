@@ -1,0 +1,8 @@
+mongo_db_dump_user: "{{ lookup('env','MONGO_ADMIN_USER') }}"
+mongo_db_dump_pass: "{{ lookup('env','MONGO_ADMIN_PASS') }}"
+# URI to connect to the db from inside the container, hence localhost
+mongo_db_dump_uri: "mongodb://{{ mongo_db_dump_user }}:{{ mongo_db_dump_pass }}@localhost"
+mongo_db_dump_file_name: "mongo.dump.{{ ansible_date_time.date }}"
+mongo_db_dump_container_dest: "/data"
+mongo_db_dump_local_dest: "{{ playbook_dir }}"
+mongo_db_dump_mongo_container_name: "mongo"
