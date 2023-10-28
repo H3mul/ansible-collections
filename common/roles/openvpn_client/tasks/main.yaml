@@ -1,0 +1,18 @@
+---
+- name: Install deps
+  apt:
+    pkg:
+      - openvpn
+      - unzip
+    state: present
+
+- name: Deploy openvpn client config
+  unarchive:
+    src: "{{ openvpn_client_archive_src }}"
+    dest: "/etc/openvpn/client"
+    remote_src: true
+
+- name: Rename ovpn file
+  shell: "mv /etc/openvpn/client/*.ovpn /etc/openvpn/client/{{ openvpn_name }}.conf"
+  notify:
+   - restart openvpn
