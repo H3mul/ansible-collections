@@ -1,0 +1,16 @@
+---
+- name: Install deps
+  apt:
+    pkg:
+      - openssh-server
+    state: present
+
+- name: Set sshd port
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: ^Port\s
+    line: "Port {{ sshd_port }}"
+    validate: "sshd -Tf %s"
+  # notify:
+  #  - restart sshd
