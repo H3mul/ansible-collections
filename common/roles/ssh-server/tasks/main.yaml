@@ -12,5 +12,5 @@
     regexp: ^Port\s
     line: "Port {{ sshd_port }}"
     validate: "sshd -Tf %s"
-  # notify:
-  #  - restart sshd
+  notify:
+   - restart sshd

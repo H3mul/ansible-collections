@@ -9,12 +9,16 @@
     src: traefik-auth.conf.j2
     dest: /etc/fail2ban/filter.d/traefik-auth.conf
   when: fail2ban_use_traefik_filters
+  notify:
+   - restart fail2ban
 
 - name: Set up filters for traefik bots
   template:
     src: traefik-botsearch.conf.j2
     dest: /etc/fail2ban/filter.d/traefik-botsearch.conf
   when: fail2ban_use_traefik_filters
+  notify:
+   - restart fail2ban
 
 - name: Set up jails
   template:
