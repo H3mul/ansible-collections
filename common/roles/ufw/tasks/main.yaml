@@ -10,7 +10,7 @@
     policy: deny
   notify:
     - reload ufw
-  when: deny_all_incoming | bool == true
+  when: ufw_deny_all_incoming | bool == true
 
 - name: ufw allow outgoing
   ufw:
@@ -19,15 +19,16 @@
     policy: allow
   notify:
     - reload ufw
-  when: allow_all_outgoing | bool == true
+  when: ufw_allow_all_outgoing | bool == true
 
-- name: ufw allow 
+- name: ufw allow specific ports in
   ufw:
     rule: allow
-    name: "{{ item }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
   notify:
     - reload ufw
-  loop: "{{ allowed_ufw_rules }}"
+  loop: "{{ ufw_allowed_ports_in }}"
 
 - name: enable ufw service
   ufw:

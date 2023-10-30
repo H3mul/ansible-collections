@@ -2,8 +2,7 @@
 
 [{{service.name}}]
 enabled = {{ service.enabled if service.enabled is defined else "true" }}
-
-{% for key, value in service.iteritems() %}
+{% for key, value in service.items() %}
 {% if key != "enabled" %}
 {{ key }} = {{ value }}
 {% endif %}
