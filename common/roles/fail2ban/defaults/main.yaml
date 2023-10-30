@@ -1,1 +1,2 @@
 fail2ban_services: []
+fail2ban_use_traefik_filters: false

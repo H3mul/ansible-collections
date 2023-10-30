@@ -2,11 +2,10 @@
 
 [{{service.name}}]
 enabled = {{ service.enabled if service.enabled is defined else "true" }}
-{% if service.port is defined %}
-port = {{ service.port }}
-{% endif %}
-{% if service.bantime is defined %}
-bantime = {{ service.bantime }}
-{% endif %}
 
+{% for key, value in service.iteritems() %}
+{% if key != "enabled" %}
+{{ key }} = {{ value }}
+{% endif %}
+{% endfor %}
 {% endfor %}
