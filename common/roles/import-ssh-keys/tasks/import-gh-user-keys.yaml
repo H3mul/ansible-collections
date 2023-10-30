@@ -1,0 +1,6 @@
+- name: Add ssh keys from github
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.ssh/authorized_keys"
+    regexp: "^{{ item }}"
+    line: "{{ item }}"
+  loop: "{{ lookup('ansible.builtin.url', 'https://github.com/' + gh_user + '.keys', wantlist=True) }}"

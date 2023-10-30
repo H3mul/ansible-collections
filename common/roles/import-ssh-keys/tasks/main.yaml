@@ -1,0 +1,4 @@
+- include_tasks: import-gh-user-keys.yaml
+  with_items: "{{ ssh_keys_gh_users }}"
+  loop_control:
+    loop_var: gh_user
