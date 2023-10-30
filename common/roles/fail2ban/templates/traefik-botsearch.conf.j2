@@ -4,4 +4,4 @@
 before = botsearch-common.conf
 
 [Definition]
-failregex = ^<HOST> \- \S+ \[[^\]]*\] \"(GET|POST|HEAD) \/<block> \S+\" 404 .+$
+failregex = ^<HOST> \- \S+ \[[^\]]*\] \"(GET|POST|HEAD) [^"]+\" 404 .+$
