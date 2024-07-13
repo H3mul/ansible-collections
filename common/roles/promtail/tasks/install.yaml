@@ -1,0 +1,21 @@
+- name: Add Grafana repository signing key
+  apt_key:
+    url: https://apt.grafana.com/gpg.key
+    state: present
+
+- name: Install Grafana apt repository
+  apt_repository:
+    repo: deb https://apt.grafana.com stable main
+    state: present
+
+- name: Install promtail
+  apt:
+    name: promtail
+    state: present
+
+- name: Create positions dir
+  file:
+    path: "{{ promtail_config_positions_dir }}"
+    state: directory
+    owner: promtail
+    mode: '0770'

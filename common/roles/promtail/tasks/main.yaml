@@ -1,0 +1,26 @@
+- import_tasks: install.yaml
+  tags:
+    - promtail_install
+
+- name: Write config
+  notify:
+    - Restart promtail
+  template:
+    src: config.j2
+    dest: "{{ promtail_config_file }}"
+    owner: root
+    group: root
+    mode: 0644
+    validate: promtail -config.file %s -check-syntax
+  tags:
+    - promtail_config
+
+- name: Ensure promtail service is started and enabled
+  become: True
+  systemd:
+    daemon_reload: True
+    name: "{{ promtail_systemd_service }}"
+    state: started
+    enabled: True
+  tags:
+    - promtail_run

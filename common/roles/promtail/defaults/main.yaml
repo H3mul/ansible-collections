@@ -1,0 +1,32 @@
+promtail_config_server:
+  http_listen_port: 9080
+
+promtail_log_level: info
+# One of: debug, info, warn, error
+
+promtail_systemd_service: promtail
+promtail_config_file: /etc/promtail/config.yml
+promtail_config_positions_dir: /var/log/promtail
+promtail_config_positions:
+  filename: "{{ promtail_config_positions_dir }}/positions.yaml"
+
+
+promtail_loki_server_url: http://127.0.0.1:3100
+promtail_config_clients:
+  - url: "{{ promtail_loki_server_url }}/loki/api/v1/push"
+
+promtail_target_config: {}
+#  promtail_target_config:
+#    sync_period: "10s"
+
+promtail_config_scrape_configs: []
+#  promtail_config_scrape_configs:
+#    - job_name: system
+#      entry_parser: raw
+#      static_configs:
+#      - targets:
+#          - localhost
+#        labels:
+#          job: varlogs
+#          host: {{ ansible_hostname }}
+#          __path__: /var/log/*log
