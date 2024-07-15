@@ -13,9 +13,16 @@
     name: promtail
     state: present
 
+- name: Add promtail user to adm group to access journal
+  user:
+    name: promtail
+    groups: adm
+    append: true
+
 - name: Create positions dir
   file:
     path: "{{ promtail_config_positions_dir }}"
     state: directory
     owner: promtail
+    group: adm
     mode: '0770'
