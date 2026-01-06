@@ -1,0 +1,59 @@
+---
+- name: Update APT cache
+  apt:
+    update_cache: yes
+
+- name: Get kernel release
+  shell: uname -r
+  register: kernel_release
+  changed_when: false
+
+- name: Install linux-tools for current kernel and hwdata
+  apt:
+    pkg:
+      - "linux-tools-{{ kernel_release.stdout }}"
+      - hwdata
+    state: present
+
+- name: Create usbipd systemd service file
+  template:
+    src: usbipd.service.j2
+    dest: /etc/systemd/system/usbipd.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload systemd
+  
+- name: Create usbip-bind systemd service file
+  template:
+    src: usbip-bind@.service.j2
+    dest: /etc/systemd/system/usbip-bind@.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload systemd
+
+- name: Enable and start usbipd service
+  systemd:
+    name: usbipd
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Enable and start usbip-bind services for specified bind ids
+  systemd:
+    name: "usbip-bind@{{ item }}.service"
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: usbip_bind_ids is defined and usbip_bind_ids | length > 0
+  loop: "{{ usbip_bind_ids }}"
+  
+- name: Enable and start usbip-bind services for specified devices
+  systemd:
+    name: "usbip-bind-device@{{ item }}.service"
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: usbip_bind_devices is defined and usbip_bind_devices | length > 0
+  loop: "{{ usbip_bind_devices }}"

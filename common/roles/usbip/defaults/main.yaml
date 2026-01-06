@@ -1,0 +1,11 @@
+---
+# usbipd service configuration
+usbipd_service_enabled: true
+usbipd_service_state: started
+
+# usbipd binary path
+usbipd_binary_path: /usr/bin/usbipd
+usbip_binary_path: /usr/bin/usbip
+
+usbip_bind_ids: []
+usbip_bind_devices: []

@@ -1,0 +1,12 @@
+[Unit]
+Description=USB/IP Device Server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ usbipd_binary_path }}
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

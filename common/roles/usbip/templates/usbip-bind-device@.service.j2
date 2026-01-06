@@ -1,0 +1,24 @@
+[Unit]
+Description=USB-IP Binding for device %I
+After=network-online.target usbipd.service
+Wants=network-online.target
+Requires=usbipd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash -c '\
+  BIND_ID=$(/usr/sbin/usbip list -p -l | grep "#usbid=%I#" | cut -d# -f1 | cut -d= -f2); \
+  if [ -z "$$BIND_ID" ]; then \
+    echo "Error: USB device with ID %I not found"; \
+    exit 1; \
+  fi; \
+  {{ usbip_binary_path }} bind -b $$BIND_ID'
+ExecStop=/bin/bash -c '\
+  BIND_ID=$(/usr/sbin/usbip list -p -l | grep "#usbid=%I#" | cut -d# -f1 | cut -d= -f2); \
+  if [ -n "$$BIND_ID" ]; then \
+    {{ usbip_binary_path }} unbind -b $$BIND_ID; \
+  fi'
+
+[Install]
+WantedBy=multi-user.target
