@@ -1,0 +1,12 @@
+[Unit]
+Description=VirtualHere Server
+After=network.target
+
+[Service]
+Type=forking
+ExecStart={{ virtualhere_binary_path }}/{{ virtualhere_binary }} -b -c {{ virtualhere_config_path }}
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

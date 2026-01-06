@@ -1,0 +1,22 @@
+---
+# VirtualHere download server base URL
+virtualhere_download_url: "https://www.virtualhere.com/sites/default/files/usbserver"
+
+# Architecture to binary name mapping
+virtualhere_binaries:
+  x86_64: vhusbdx86_64
+  i386: vhusbdi386
+  armv7l: vhusbdarm
+  aarch64: vhusbdarm64
+  mips: vhusbdmips
+  mipsel: vhusbdmipsel
+
+# Service configuration
+virtualhere_service_enabled: true
+virtualhere_service_state: started
+
+# Configuration file path
+virtualhere_config_path: /usr/local/etc/virtualhere/config.ini
+
+# Binary installation path
+virtualhere_binary_path: /usr/local/sbin

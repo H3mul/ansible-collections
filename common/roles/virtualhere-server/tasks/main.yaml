@@ -1,0 +1,48 @@
+---
+- name: Gather system facts
+  setup:
+    gather_subset: hardware
+
+- name: Determine the correct binary filename for the architecture
+  set_fact:
+    virtualhere_binary: "{{ virtualhere_binaries[ansible_architecture] | default('vhusbdi386') }}"
+
+- name: Download VirtualHere server binary
+  get_url:
+    url: "{{ virtualhere_download_url }}/{{ virtualhere_binary }}"
+    dest: "/tmp/{{ virtualhere_binary }}"
+    mode: '0755'
+
+- name: Install VirtualHere binary to /usr/local/sbin
+  copy:
+    src: "/tmp/{{ virtualhere_binary }}"
+    dest: "/usr/local/sbin/{{ virtualhere_binary }}"
+    mode: '0755'
+    remote_src: true
+
+- name: Create VirtualHere configuration directory
+  file:
+    path: /usr/local/etc/virtualhere
+    state: directory
+    mode: '0755'
+
+- name: Deploy VirtualHere systemd service file
+  template:
+    src: virtualhere.service.j2
+    dest: /etc/systemd/system/virtualhere.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload systemd
+
+- name: Enable and start VirtualHere service
+  systemd:
+    name: virtualhere
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Clean up temporary binary file
+  file:
+    path: "/tmp/{{ virtualhere_binary }}"
+    state: absent
