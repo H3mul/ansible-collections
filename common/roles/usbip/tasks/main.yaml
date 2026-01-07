@@ -14,6 +14,15 @@
       - "linux-tools-{{ kernel_release.stdout }}"
       - hwdata
     state: present
+    
+- name: Ensure 'modulename' is loaded on boot
+  community.general.modprobe:
+    name: "{{ item }}"
+    state: present
+    persistent: present
+  loop:
+    - usbip-core
+    - usbip-host
 
 - name: Create usbipd systemd service file
   template:
