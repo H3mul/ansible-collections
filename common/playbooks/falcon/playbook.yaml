@@ -1,0 +1,17 @@
+- hosts: all
+  become: yes
+
+  collections:
+    - h3mul.common
+
+  roles:
+    - role: virtualhere-server
+    
+    # Waiting for 0.9.7.4 release
+    # 
+    # https://github.com/vadimgrn/usbip-win2/releases
+    # - role: usbip
+    #   vars:
+    #     usbip_bind_devices:
+    #       # Falcon usb address (vendor:product)
+    #       - 303a:4001

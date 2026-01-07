@@ -1,0 +1,34 @@
+- hosts: all
+  become: yes
+
+  collections:
+    - h3mul.common
+
+  roles:
+    - role: promtail
+      tags:
+        - promtail
+      vars:
+        promtail_loki_server_url: https://loki.hemul.net
+        promtail_config_scrape_configs: 
+          - job_name: octoprint
+            journal:
+              max_age: 12h
+              path: /var/log/journal
+              labels:
+                job: octoprint-systemd-journal
+            relabel_configs:
+              - source_labels: ['__journal__systemd_unit']
+                target_label: 'unit'
+
+    - role: h3mul.octoprint
+      tags:
+        - octoprint
+      vars:
+        install_octoprint: true
+        install_mjpg_streamer: false
+        octoprint_user: octoprint
+        reset_config: false
+        webcam_width: 1280
+        webcam_height: 720
+

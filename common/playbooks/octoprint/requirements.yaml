@@ -1,0 +1,5 @@
+roles:
+  - name: h3mul.octoprint
+    src: https://github.com/h3mul/ansible_octoprint
+    scm: git
+    version: master
