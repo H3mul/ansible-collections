@@ -7,6 +7,14 @@
   roles:
     - role: virtualhere-server
     
+    - role: h3mul.octoprint
+      tags:
+        - octoprint
+      vars:
+        install_octoprint: true
+        install_mjpg_streamer: false
+        octoprint_user: octoprint
+    
     # Waiting for 0.9.7.4 release
     # 
     # https://github.com/vadimgrn/usbip-win2/releases
