@@ -1,0 +1,86 @@
+---
+- name: Install required system packages
+  apt:
+    pkg:
+      - git
+      - acl
+      - python3-venv
+      - python3-dev
+      - python3-pip
+      - python3-setuptools
+    state: present
+    update_cache: true
+
+- name: Create gcode-proxy user
+  user:
+    name: "{{ gcode_proxy_user }}"
+    group: "{{ gcode_proxy_group }}"
+    groups: tty, dialout, video
+    state: present
+    append: true
+
+- name: Create gcode-proxy installation directory
+  file:
+    path: "{{ gcode_proxy_install_path }}"
+    state: directory
+    owner: "{{ gcode_proxy_user }}"
+    group: "{{ gcode_proxy_group }}"
+    mode: '0755'
+
+- name: Clone gcode-proxy repository
+  git:
+    repo: "{{ gcode_proxy_git_repo }}"
+    dest: "{{ gcode_proxy_install_path }}/src"
+    version: "{{ gcode_proxy_git_version if gcode_proxy_git_version != '' else omit }}"
+    update: true
+  become: true
+  become_user: "{{ gcode_proxy_user }}"
+
+- name: Create Python virtual environment for gcode-proxy
+  command: python3 -m venv "{{ gcode_proxy_install_path }}/venv"
+  args:
+    creates: "{{ gcode_proxy_install_path }}/venv/bin/python"
+  become: true
+  become_user: "{{ gcode_proxy_user }}"
+  
+- name: Install gcode-proxy from pyproject.toml
+  pip:
+    name: "{{ gcode_proxy_install_path }}/src"
+    state: present
+    virtualenv: "{{ gcode_proxy_install_path }}/venv"
+  become: true
+  become_user: "{{ gcode_proxy_user }}"
+
+- name: Create gcode-proxy config directory
+  file:
+    path: "{{ gcode_proxy_config_path | dirname }}"
+    state: directory
+    owner: "{{ gcode_proxy_user }}"
+    group: "{{ gcode_proxy_group }}"
+    mode: '0755'
+
+- name: Deploy gcode-proxy config file
+  copy:
+    content: "{{ gcode_proxy_config | to_nice_yaml }}"
+    dest: "{{ gcode_proxy_config_path }}"
+    owner: "{{ gcode_proxy_user }}"
+    group: "{{ gcode_proxy_group }}"
+    mode: '0640'
+  when: gcode_proxy_config | length > 0
+  notify: restart gcode-proxy
+
+- name: Create systemd service file for gcode-proxy
+  template:
+    src: gcode-proxy.service.j2
+    dest: /etc/systemd/system/gcode-proxy.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload systemd and restart gcode-proxy
+
+- name: Enable and start gcode-proxy service
+  systemd:
+    name: gcode-proxy
+    enabled: "{{ gcode_proxy_service_enabled }}"
+    state: "{{ gcode_proxy_service_state }}"
+    daemon_reload: true

@@ -1,0 +1,59 @@
+---
+- name: Install python3-venv package
+  apt:
+    name: python3-venv
+    state: present
+    update_cache: true
+    
+- name: Create gcode-proxy user
+  user:
+    name: "{{ hass_cli_user }}"
+    state: present
+    create_home: true
+
+- name: Create hass-cli virtual environment directory
+  file:
+    path: "{{ hass_cli_venv_path }}"
+    state: directory
+    owner: "{{ hass_cli_user }}"
+    group: "{{ hass_cli_group }}"
+    mode: '0755'
+
+- name: Create Python virtual environment for gcode-proxy
+  command: python3 -m venv "{{ gcode_proxy_install_path }}/venv"
+  args:
+    creates: "{{ gcode_proxy_install_path }}/venv/bin/python"
+  become: true
+  become_user: "{{ hass_cli_user }}"
+
+- name: Install hass-cli via pip in virtual environment
+  pip:
+    name: homeassistant-cli
+    version: "{{ hass_cli_version if hass_cli_version != '' else omit }}"
+    state: present
+    virtualenv: "{{ hass_cli_venv_path }}"
+    virtualenv_python: python3
+
+- name: Create symlink to hass-cli binary
+  file:
+    src: "{{ hass_cli_venv_path }}/bin/hass-cli"
+    dest: /usr/local/bin/hass-cli
+    state: link
+
+- name: Create credentials directory
+  file:
+    path: "{{ hass_cli_credentials_path | dirname }}"
+    state: directory
+    owner: "{{ hass_cli_user }}"
+    group: "{{ hass_cli_group }}"
+    mode: '0700'
+  when: hass_cli_server != "" and hass_cli_token != ""
+
+- name: Deploy hass-cli credentials file
+  template:
+    src: credentials.j2
+    dest: "{{ hass_cli_credentials_path }}"
+    owner: "{{ hass_cli_user }}"
+    group: "{{ hass_cli_group }}"
+    mode: '0600'
+  when: hass_cli_server != "" and hass_cli_token != ""

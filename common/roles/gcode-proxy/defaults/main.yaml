@@ -1,0 +1,31 @@
+---
+# Git repository URL
+gcode_proxy_git_repo: https://github.com/H3mul/gcode-proxy.git
+
+# Git branch/tag/commit
+gcode_proxy_git_version: main
+
+
+# Application user and group
+gcode_proxy_user: gcode-proxy
+gcode_proxy_group: gcode-proxy
+
+# Installation directory
+gcode_proxy_install_path: "/home/{{ gcode_proxy_user }}"
+
+# Configuration file path
+gcode_proxy_config_path: "{{ gcode_proxy_install_path }}/config.yaml"
+
+# Configuration content (dict to be converted to YAML)
+gcode_proxy_config: {}
+
+# Whether to enable and start the systemd service
+gcode_proxy_service_enabled: true
+gcode_proxy_service_state: started
+
+# Service restart policy
+gcode_proxy_service_restart: always
+gcode_proxy_service_restart_sec: 10
+
+# Optional environment file for systemd service
+gcode_proxy_environment_file: ""

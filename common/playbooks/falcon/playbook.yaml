@@ -14,12 +14,62 @@
         install_octoprint: true
         install_mjpg_streamer: false
         octoprint_user: octoprint
-    
-    # Waiting for 0.9.7.4 release
-    # 
-    # https://github.com/vadimgrn/usbip-win2/releases
-    # - role: usbip
-    #   vars:
-    #     usbip_bind_devices:
-    #       # Falcon usb address (vendor:product)
-    #       - 303a:4001
+        
+    - role: hass-cli
+      tags:
+        - hass-cli
+      vars:
+        hass_cli_user: "gcode-proxy"
+        hass_cli_group: "gcode-proxy"
+        hass_cli_venv_path: "/home/gcode-proxy/venv"
+        hass_cli_credentials_path: "/home/gcode-proxy/.hass-cli/credentials"
+        hass_cli_server: "{{ hass_server_secret }}"
+        hass_cli_token: "{{ hass_token_secret }}"
+        
+    - role: gcode-proxy
+      tags:
+        - gcode-proxy
+      vars:
+        gcode_proxy_environment_file: "/home/gcode-proxy/.hass-cli/credentials"
+        
+        gcode_proxy_config:
+          server:
+            port: 8080
+            address: 0.0.0.0
+            queue-limit: 1000
+          
+          device:
+            usb-id: 303a:4001
+            baud-rate: 115200
+            serial-delay: 0.1
+            response-timeout: 120.0
+            normalize-grbl-responses: true
+            
+          gcode-log-file: "/home/gcode-proxy/gcode.log"
+          
+          custom-triggers:
+            - id: air-assist-on
+              trigger:
+                type: gcode
+                match: M8
+              command: "hass-cli service call homeassistant.turn_on --arguments entity_id=switch.laser_air_assist"
+          
+            - id: air-assist-off
+              trigger:
+                type: gcode
+                match: M9
+                synchronize: true
+              command: "hass-cli service call homeassistant.turn_off --arguments entity_id=switch.laser_air_assist"
+  
+            - id: air-vent-on
+              trigger:
+                type: gcode
+                match: M7$
+              command: "hass-cli service call homeassistant.turn_on --arguments entity_id=fan.laser_vent"
+          
+            - id: air-vent-off
+              trigger:
+                type: gcode
+                match: M7\.1
+                synchronize: true
+              command: "hass-cli service call homeassistant.turn_off --arguments entity_id=fan.laser_vent"

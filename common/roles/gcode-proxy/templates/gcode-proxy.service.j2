@@ -1,0 +1,31 @@
+[Unit]
+Description=gcode-proxy Server
+Documentation=https://github.com/H3mul/gcode-proxy
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ gcode_proxy_user }}
+Group={{ gcode_proxy_group }}
+WorkingDirectory={{ gcode_proxy_install_path }}
+{% if gcode_proxy_environment_file %}
+EnvironmentFile={{ gcode_proxy_environment_file }}
+{% endif %}
+ExecStart={{ gcode_proxy_install_path }}/venv/bin/gcode-proxy-server -c {{ gcode_proxy_config_path }}
+Restart={{ gcode_proxy_service_restart }}
+RestartSec={{ gcode_proxy_service_restart_sec }}
+
+# Security and resource limits
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths={{ gcode_proxy_install_path }} {{ gcode_proxy_config_path | dirname }}
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=gcode-proxy
+
+[Install]
+WantedBy=multi-user.target

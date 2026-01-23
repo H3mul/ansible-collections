@@ -1,0 +1,15 @@
+---
+# Hass-CLI installation directory
+hass_cli_venv_path: /opt/hass-cli
+
+# Hass-CLI version (empty means latest)
+hass_cli_version: latest
+
+# Hass-CLI user and group
+hass_cli_user: root
+hass_cli_group: root
+
+# Credentials file configuration
+hass_cli_credentials_path: /root/.homeassistant/credentials
+hass_cli_server: ""
+hass_cli_token: ""
