@@ -1,0 +1,73 @@
+version: '3'
+
+tasks:
+  sops:decrypt:
+    desc: Decrypts all *.sops files into *.secret.<ext> files
+    cmds:
+      - |
+        find . -name "*.sops" -exec sh -c '
+          # 1. Identify the original extension (e.g., yaml, json, env)
+          ext=$(echo "$1" | sed -E "s/.*\.([^.]+)\.sops$/\1/")
+          
+          # 2. Build the output filename (e.g., all.secret.yaml)
+          output_file=$(echo "$1" | sed "s/\.${ext}\.sops$/\.secret\.${ext}/")
+          
+          # 3. Decrypt with explicit input type to prevent JSON errors
+          sops -d --output-type "$ext" --input-type "$ext" "$1" > "$output_file"
+          
+          echo "Decrypted: $1 (as $ext) -> $output_file"
+        ' _ {} \;
+        
+  sops:encrypt:
+      desc: Creates a new .sops source from file (e.g., task sops:encrypt file=all.secret.yaml)
+      summary: |
+        Takes a decrypted file, identifies its .sops counterpart, and encrypts the content back.
+        Usage: task sops:encrypt file=group_vars/all/all.secret.yaml
+      preconditions:
+        - sh: "test -f {{.file}}"
+          msg: "File {{.file}} not found. Usage: task sops:encrypt file=path/to/file.secret.yaml"
+      cmds:
+        - |
+          # 1. Identify the extension (e.g., yaml)
+          ext=$(echo "{{.file}}" | sed -E "s/.*\.secret\.([^.]+)$/\1/")
+          
+          # 2. Build the destination filename (e.g., all.yaml.sops)
+          dest_file=$(echo "{{.file}}" | sed "s/\.secret\.${ext}$/\.${ext}\.sops/")
+          
+          # 3. Encrypt back to the source
+          sops -e --input-type "$ext" --output-type "$ext" "{{.file}}" | sponge "$dest_file"
+          
+          echo "Encrypted: {{.file}} -> $dest_file"
+
+  sops:clean:
+    desc: Removes all decrypted .secret files
+    prompt: This will delete all local secret files. Continue?
+    cmds:
+      - find . -name "*.secret.*" -delete
+      - echo "Cleanup complete. Decrypted secrets removed."
+
+  sops:status:
+    desc: Shows which secret files currently exist locally
+    cmds:
+      - find . -name "*.secret.*"
+      
+  sops:encrypt:
+      desc: Creates a new .sops source from file (e.g., task sops:encrypt file=all.secret.yaml)
+      summary: |
+        Takes a decrypted file, identifies its .sops counterpart, and encrypts the content back.
+        Usage: task sops:encrypt file=group_vars/all/all.secret.yaml
+      preconditions:
+        - sh: "test -f {{.file}}"
+          msg: "File {{.file}} not found. Usage: task sops:encrypt file=path/to/file.secret.yaml"
+      cmds:
+        - |
+          # 1. Identify the extension (e.g., yaml)
+          ext=$(echo "{{.file}}" | sed -E "s/.*\.secret\.([^.]+)$/\1/")
+          
+          # 2. Build the destination filename (e.g., all.yaml.sops)
+          dest_file=$(echo "{{.file}}" | sed "s/\.secret\.${ext}$/\.${ext}\.sops/")
+          
+          # 3. Encrypt back to the source
+          sops -e --input-type "$ext" --output-type "$ext" "{{.file}}" | sponge "$dest_file"
+          
+          echo "Encrypted: {{.file}} -> $dest_file"
