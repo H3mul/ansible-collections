@@ -19,18 +19,31 @@
       tags:
         - hass-cli
       vars:
-        hass_cli_user: "gcode-proxy"
-        hass_cli_group: "gcode-proxy"
-        hass_cli_venv_path: "/home/gcode-proxy/venv"
-        hass_cli_credentials_path: "/home/gcode-proxy/.hass-cli/credentials"
-        hass_cli_server: "{{ hass_server_secret }}"
-        hass_cli_token: "{{ hass_token_secret }}"
+        pb_cli_user: "gcode-proxy"
+        pb_cli_group: "gcode-proxy"
+        pb_cli_venv_path: "/home/gcode-proxy/venv"
+        pb_cli_credentials_path: "/home/gcode-proxy/.hass-cli/credentials"
+        pb_cli_server: "{{ hass_server_secret }}"
+        pb_cli_token: "{{ hass_token_secret }}"
+        
+    - role: pb-cli
+      tags:
+        - pb-cli
+      vars:
+        pb_cli_user: "gcode-proxy"
+        pb_cli_group: "gcode-proxy"
+        pb_cli_venv_path: "/home/gcode-proxy/venv"
+        pb_cli_credentials_path: "/home/gcode-proxy/.pb-cli/credentials"
+        pb_cli_token: "{{ pb_token_secret }}"
         
     - role: gcode-proxy
       tags:
         - gcode-proxy
       vars:
-        gcode_proxy_environment_file: "/home/gcode-proxy/.hass-cli/credentials"
+        gcode_proxy_environment_files: [
+          "/home/gcode-proxy/.hass-cli/credentials",
+          "/home/gcode-proxy/.pb-cli/credentials",
+        ]
         
         gcode_proxy_config:
           server:

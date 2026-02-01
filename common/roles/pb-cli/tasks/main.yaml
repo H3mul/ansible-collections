@@ -1,0 +1,59 @@
+---
+- name: Install python3-venv package
+  apt:
+    name: python3-venv
+    state: present
+    update_cache: true
+    
+- name: Create gcode-proxy user
+  user:
+    name: "{{ pb_cli_user }}"
+    state: present
+    create_home: true
+
+- name: Create pv-cli virtual environment directory
+  file:
+    path: "{{ pb_cli_venv_path }}"
+    state: directory
+    owner: "{{ pb_cli_user }}"
+    group: "{{ pb_cli_group }}"
+    mode: '0755'
+
+- name: Create Python virtual environment for gcode-proxy
+  command: python3 -m venv "{{ gcode_proxy_install_path }}/venv"
+  args:
+    creates: "{{ gcode_proxy_install_path }}/venv/bin/python"
+  become: true
+  become_user: "{{ pb_cli_user }}"
+
+- name: Install pb-cli via pip in virtual environment
+  pip:
+    name: pushbullet-cli
+    version: "{{ pb_cli_version if pb_cli_version != '' else omit }}"
+    state: present
+    virtualenv: "{{ pb_cli_venv_path }}"
+    virtualenv_python: python3
+
+- name: Create symlink to pb-cli binary
+  file:
+    src: "{{ pb_cli_venv_path }}/bin/pb-cli"
+    dest: /usr/local/bin/pb-cli
+    state: link
+
+- name: Create credentials directory
+  file:
+    path: "{{ pb_cli_credentials_path | dirname }}"
+    state: directory
+    owner: "{{ pb_cli_user }}"
+    group: "{{ pb_cli_group }}"
+    mode: '0700'
+  when: pb_cli_server != "" and pb_cli_token != ""
+
+- name: Deploy pb-cli credentials file
+  template:
+    src: credentials.j2
+    dest: "{{ pb_cli_credentials_path }}"
+    owner: "{{ pb_cli_user }}"
+    group: "{{ pb_cli_group }}"
+    mode: '0600'
+  when: pb_cli_server != "" and pb_cli_token != ""

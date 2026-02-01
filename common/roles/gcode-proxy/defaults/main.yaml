@@ -28,4 +28,4 @@ gcode_proxy_service_restart: always
 gcode_proxy_service_restart_sec: 10
 
 # Optional environment file for systemd service
-gcode_proxy_environment_file: ""
+gcode_proxy_environment_files: []

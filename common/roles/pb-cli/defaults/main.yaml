@@ -1,0 +1,15 @@
+---
+# Hass-CLI installation directory
+pb_cli_venv_path: /opt/pb-cli
+
+# Hass-CLI version (empty means latest)
+pb_cli_version: latest
+
+# Hass-CLI user and group
+pb_cli_user: root
+pb_cli_group: root
+
+# Credentials file configuration
+pb_cli_credentials_path: /root/.pushbullet/credentials
+pb_cli_server: ""
+pb_cli_token: ""

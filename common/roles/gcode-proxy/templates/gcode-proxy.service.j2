@@ -9,8 +9,9 @@ Type=simple
 User={{ gcode_proxy_user }}
 Group={{ gcode_proxy_group }}
 WorkingDirectory={{ gcode_proxy_install_path }}
-{% if gcode_proxy_environment_file %}
-EnvironmentFile={{ gcode_proxy_environment_file }}
+{% for environment_file in gcode_proxy_environment_files %}
+EnvironmentFile={{ environment_file }}
+{% endfor %}
 {% endif %}
 ExecStart={{ gcode_proxy_install_path }}/venv/bin/gcode-proxy-server -c {{ gcode_proxy_config_path }}
 Restart={{ gcode_proxy_service_restart }}
