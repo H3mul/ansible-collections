@@ -36,8 +36,8 @@
 
 - name: Create symlink to pb-cli binary
   file:
-    src: "{{ pb_cli_venv_path }}/bin/pb-cli"
-    dest: /usr/local/bin/pb-cli
+    src: "{{ pb_cli_venv_path }}/bin/pb"
+    dest: /usr/local/bin/pb
     state: link
 
 - name: Create credentials directory
@@ -47,7 +47,7 @@
     owner: "{{ pb_cli_user }}"
     group: "{{ pb_cli_group }}"
     mode: '0700'
-  when: pb_cli_server != "" and pb_cli_token != ""
+  when: pb_cli_token != ""
 
 - name: Deploy pb-cli credentials file
   template:
@@ -56,4 +56,4 @@
     owner: "{{ pb_cli_user }}"
     group: "{{ pb_cli_group }}"
     mode: '0600'
-  when: pb_cli_server != "" and pb_cli_token != ""
+  when: pb_cli_token != ""

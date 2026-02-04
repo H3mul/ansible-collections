@@ -12,7 +12,6 @@ WorkingDirectory={{ gcode_proxy_install_path }}
 {% for environment_file in gcode_proxy_environment_files %}
 EnvironmentFile={{ environment_file }}
 {% endfor %}
-{% endif %}
 ExecStart={{ gcode_proxy_install_path }}/venv/bin/gcode-proxy-server -c {{ gcode_proxy_config_path }}
 Restart={{ gcode_proxy_service_restart }}
 RestartSec={{ gcode_proxy_service_restart_sec }}

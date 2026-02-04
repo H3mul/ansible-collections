@@ -11,5 +11,4 @@ pb_cli_group: root
 
 # Credentials file configuration
 pb_cli_credentials_path: /root/.pushbullet/credentials
-pb_cli_server: ""
 pb_cli_token: ""
