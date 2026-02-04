@@ -139,6 +139,16 @@
             # Environment variable: DEVICE_STATUS_BEHAVIOR
             status-behavior: forward
           
+          
+          # GCode communication log file
+          # Optional path to a file where all GCode commands sent to the device
+          # and responses received from the device will be logged.
+          # Log entries include timestamp and source (client address or 'device').
+          # If the file exists, new entries are appended to the end.
+          # Environment variable: GCODE_LOG_FILE
+          # gcode-log-file: gcode.log
+          # tcp-log-file: tcp.log
+          
           # Custom triggers for executing external commands in response to GCode patterns
           # Triggers allow you to integrate external systems (scripts, Home Assistant, etc.)
           # All trigger execution is asynchronous and non-blocking
@@ -195,10 +205,10 @@
             - id: job-end-notification
               trigger:
                 type: gcode
-                match: M2|M30
-                behavior: forward
+                match: (M2$)|(M30$)
+                behavior: forward # Don't eat the command
                 synchronize: false
-              command: "pb send 'Laser Job Completed' 'Laser cutting/engraving job has finished.'"
+              command: "pb push -t 'Laser Job Completed' 'Laser cutting/engraving job has finished.'"
           
             # Example: Power off when idle
             - id: idle-power-off
@@ -207,12 +217,13 @@
                 match: Idle
                 delay: 300 #s (5 minutes)
               command: "hass-cli service call homeassistant.turn_off --arguments entity_id=switch.laser_power"
-              
+          
             # Example: Power on when requested
             - id: power-on
               trigger:
                 type: gcode
-                match: .*
+                match: .*  # -- matches any gcode that is not a status query
                 state: Disconnected
+                behavior: forward # Don't eat the command
                 synchronize: false
               command: "hass-cli service call homeassistant.turn_on --arguments entity_id=switch.laser_power"
