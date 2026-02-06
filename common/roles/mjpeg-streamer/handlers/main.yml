@@ -1,0 +1,9 @@
+---
+# handlers file for octoprint
+
+- name: restart_mjpg_streamer
+  systemd:
+    name: mjpg_streamer
+    enabled: true
+    state: restarted
+    daemon_reload: true

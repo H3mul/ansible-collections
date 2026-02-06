@@ -1,0 +1,11 @@
+---
+mjpeg_streamer_repo: "https://github.com/jacksonliam/mjpg-streamer.git"
+mjpeg_streamer_dir: "/home/{{ mjpeg_streamer_user }}/mjpg-streamer/mjpg-streamer-experimental"
+mjpeg_streamer_user: mjpg_streamer
+mjpeg_streamer_port: 8081
+mjpeg_streamer_type: usb
+mjpeg_streamer_width: 640
+mjpeg_streamer_height: 480
+mjpeg_streamer_fps: 10
+mjpeg_streamer_device: /dev/video0
+mjpeg_streamer_custom_input: "input_uvc.so"

@@ -17,6 +17,15 @@
         install_mjpg_streamer: false
         octoprint_user: octoprint
         
+    - role: mjpeg-streamer
+      tags:
+        - mjpeg-streamer
+      vars:
+        mjpeg_streamer_width: 640
+        mjpeg_streamer_height: 480
+        # mjpeg_streamer_width: 1280
+        # mjpeg_streamer_height: 720
+        
     - role: hass-cli
       tags:
         - hass-cli
